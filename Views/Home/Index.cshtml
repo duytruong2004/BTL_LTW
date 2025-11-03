@@ -1,8 +1,54 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model BTL_LTW.ViewModels.HomeViewModel
+@{
+    ViewData["Title"] = "Trang chủ";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="home-news">
+    <div class="container">
+        <h2 class="section-title">Tin tức nổi bật</h2>
+        
+        <div class="news-grid">
+            
+            @foreach (var post in Model.FeaturedNews)
+            {
+                <article class="news-card">
+                    <a href="#">
+                        <img src="@(post.PostThumbnailUrl ?? "/images/news-1.jpg")" alt="@post.PostTitle">
+                    </a>
+                    <div class="card-content">
+                        <h3><a href="#">@post.PostTitle</a></h3>
+                        <a href="#" class="read-more">Đọc thêm &rarr;</a>
+                    </div>
+                </article>
+            }
+
+        </div>
+    </div>
+</section>
+
+<section class="home-news" style="background-color: #f8f9fa; padding: 4rem 0;"> <div class="container">
+        <h2 class="section-title">Tin tức hội viên</h2>
+        
+        <div class="news-grid">
+            
+            @foreach (var post in Model.MemberNews)
+            {
+                <article class="news-card">
+                    <a href="#">
+                        <img src="@(post.PostThumbnailUrl ?? "/images/news-fpt.jpg")" alt="@post.PostTitle">
+                    </a>
+                    <div class="card-content">
+                        <h3><a href="#">@post.PostTitle</a></h3>
+                        <a href="#" class="read-more">Đọc thêm &rarr;</a>
+                    </div>
+                </article>
+            }
+            
+            @if (!Model.MemberNews.Any())
+            {
+                <p style="text-align: center; grid-column: 1 / -1;">Chưa có tin tức hội viên.</p>
+            }
+
+        </div>
+    </div>
+</section>

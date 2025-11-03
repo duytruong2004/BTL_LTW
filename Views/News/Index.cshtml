@@ -1,0 +1,52 @@
+@using X.PagedList;
+@using X.PagedList.Mvc.Core;
+@model IPagedList<BTL_LTW.Models.Post> 
+@{
+    ViewData["Title"] = "Tin tức";
+}
+
+<link href="~/css/pagedlist.css" rel="stylesheet" type="text/css" />
+
+<div class="container page-container">
+    <h1 class="section-title">Tin tức</h1>
+    
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Tin tức</li>
+        </ol>
+    </nav>
+    
+    <div class="news-list-container">
+        @foreach (var item in Model)
+        {
+            <article class="news-list-item">
+                <div class="news-item-image">
+                    <a asp-action="Details" asp-route-id="@item.PostId">
+                        <img src="@(item.PostThumbnailUrl ?? "/images/news-default.jpg")" alt="@item.PostTitle">
+                    </a>
+                </div>
+                <div class="news-item-content">
+                    <h3 class="news-item-title">
+                        <a asp-action="Details" asp-route-id="@item.PostId">@item.PostTitle</a>
+                    </h3>
+                    <div class="news-item-meta">
+                        <span>@item.CreatedAt.Value.ToString("dd/MM/yyyy")</span>
+                    </div>
+                    <p class="news-item-description">
+                        </p>
+                    <a asp-action="Details" asp-route-id="@item.PostId" class="read-more">Đọc thêm &rarr;</a>
+                </div>
+            </article>
+        }
+    </div>
+
+    <div class="pagination-container">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }), new PagedListRenderOptions
+        {
+            LiElementClasses = new string[] { "page-item" },
+            PageClasses = new string[] { "page-link" }
+        })
+    </div>
+
+</div>

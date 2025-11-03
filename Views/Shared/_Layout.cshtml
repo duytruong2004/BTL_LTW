@@ -1,50 +1,82 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - BTL_LTW</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/BTL_LTW.styles.css" asp-append-version="true" />
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">BTL_LTW</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+    <title>@ViewData["Title"] - VITA Hiệp hội Công nghệ và Dịch vụ số Việt Nam</title>
 
-    <footer class="border-top footer text-muted">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    </head>
+<body>
+
+    <header class="main-header">
         <div class="container">
-            &copy; 2025 - BTL_LTW - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <a class="logo" asp-controller="Home" asp-action="Index">
+                VITA
+            </a>
+
+            <nav class="main-nav">
+                <ul>
+                    <li><a asp-controller="Home" asp-action="Index" class="active">Trang chủ</a></li>
+                    <li><a asp-controller="Home" asp-action="About">Giới thiệu</a></li>
+                    <li><a asp-controller="News" asp-action="Index">Tin tức</a></li>
+                    <li><a asp-controller="Events" asp-action="Index">Sự kiện</a></li>
+                    <li><a asp-controller="Job" asp-action="Index">Việc làm</a></li>
+                    <li><a asp-controller="Document" asp-action="Index">Tài liệu</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+    @if (User.Identity.IsAuthenticated)
+    {
+        <span style="margin-right: 15px;">Xin chào, @User.Identity.Name!</span>
+        <a asp-controller="Account" asp-action="Logout" class="btn btn-secondary">Đăng xuất</a>
+    }
+    else
+    {
+        <a asp-controller="Account" asp-action="Login" class="btn">Đăng nhập</a>
+    }
+</div>
+        </div>
+    </header>
+
+    <main role="main">
+        @RenderBody() </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-column">
+                <h4>VITA</h4>
+                <p>Hiệp hội Công nghệ và Dịch vụ số Việt Nam (VITA) kết nối, phát triển cộng đồng công nghệ số.</p>
+            </div>
+            <div class="footer-column">
+                <h4>Liên kết nhanh</h4>
+                <ul>
+                    <li><a asp-controller="Home" asp-action="About">Giới thiệu</a></li>
+                    <li><a asp-controller="News" asp-action="Index">Tin tức</a></li>
+                    <li><a asp-controller="Events" asp-action="Index">Sự kiện</a></li>
+                    <li><a asp-controller="Job" asp-action="Index">Việc làm</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Liên hệ</h4>
+                <p>
+                    Địa chỉ: Số 1, Đường ABC, Quận XYZ, Hà Nội<br>
+                    Email: info@vita.org.vn<br>
+                    Điện thoại: (024) 1234 5678
+                </p>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            &copy; @DateTime.Now.Year - Hiệp hội VITA. Phát triển bởi [Tên nhóm của bạn].
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
