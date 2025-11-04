@@ -1,0 +1,84 @@
+@model IEnumerable<BTL_LTW.Models.Post>
+@{
+    ViewData["Title"] = "Duyệt bài viết";
+}
+
+<div class="container page-container">
+    <h1 class="section-title">Duyệt bài viết</h1>
+    
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index">Quản lý</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Duyệt bài viết</li>
+        </ol>
+    </nav>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-success" role="alert">
+            Không có bài viết nào chờ duyệt!
+        </div>
+    }
+    else
+    {
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Tiêu đề</th>
+                    <th>Danh mục</th>
+                    <th>Người đăng</th>
+                    <th>Ngày đăng</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <a asp-controller="News" asp-action="Details" asp-route-id="@item.PostId" target="_blank">
+                                @item.PostTitle
+                            </a>
+                        </td>
+                        <td>@item.Category.CategoryName</td>
+                        <td>@item.Member.FullName</td>
+                        <td>@item.CreatedAt.Value.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>
+                            <form asp-action="Approve" asp-route-id="@item.PostId" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-success btn-sm">Duyệt</button>
+                            </form>
+                            
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#rejectModal-@item.PostId">
+                              Từ chối
+                            </button>
+                        </td>
+                    </tr>
+                    
+                    <div class="modal fade" id="rejectModal-@item.PostId" tabindex="-1" aria-labelledby="rejectModalLabel-@item.PostId" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <form asp-action="Reject" asp-route-id="@item.PostId" method="post">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="rejectModalLabel-@item.PostId">Lý do từ chối bài: @item.PostTitle</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="reason-@item.PostId" class="form-label">Lý do:</label>
+                                    <textarea name="reason" id="reason-@item.PostId" class="form-control" rows="3" required></textarea>
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                <button type="submit" class="btn btn-danger">Xác nhận Từ chối</button>
+                              </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                }
+            </tbody>
+        </table>
+    }
+</div>

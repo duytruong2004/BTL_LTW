@@ -4810,6 +4810,7 @@
       "Microsoft.EntityFrameworkCore.Design >= 9.0.10",
       "Microsoft.EntityFrameworkCore.SqlServer >= 9.0.10",
       "Microsoft.EntityFrameworkCore.Tools >= 9.0.10",
+      "X.PagedList >= 10.5.9",
       "X.PagedList.Mvc.Core >= 10.5.9"
     ]
   },
@@ -4882,6 +4883,10 @@
             "suppressParent": "All",
             "target": "Package",
             "version": "[9.0.10, )"
+          },
+          "X.PagedList": {
+            "target": "Package",
+            "version": "[10.5.9, )"
           },
           "X.PagedList.Mvc.Core": {
             "target": "Package",

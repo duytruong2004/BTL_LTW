@@ -1,4 +1,5 @@
-using BTL_LTW.Models; // Thay BTL_LTW bằng tên project của bạn
+// [Nội dung file Controllers/AccountController.cs]
+using BTL_LTW.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -7,7 +8,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Threading.Tasks;
 
-// Thay BTL_LTW bằng tên project của bạn
 namespace BTL_LTW.Controllers
 {
     public class AccountController : Controller
@@ -41,8 +41,6 @@ namespace BTL_LTW.Controllers
             }
 
             // 2. Kiểm tra mật khẩu
-            // Dùng BCrypt để so sánh mật khẩu người dùng nhập (password)
-            // với mật khẩu đã băm trong CSDL (user.PassWordHash)
             bool isValidPassword = BCrypt.Net.BCrypt.Verify(password, user.PassWordHash);
 
             if (!isValidPassword)
@@ -51,14 +49,27 @@ namespace BTL_LTW.Controllers
                 return View();
             }
 
-            // 3. TẠO COOKIE ĐĂNG NHẬP
+            // 3. LẤY QUYỀN (ROLES) CỦA USER (THAY ĐỔI QUAN TRỌNG)
+            var userPermissions = await _context.MemberPermisions
+                                        .Where(mp => mp.MemberId == user.MembersId && mp.Licensed == true)
+                                        .Include(mp => mp.Permision) // Join sang bảng Permision
+                                        .ToListAsync();
+
+            var roles = userPermissions.Select(mp => mp.Permision.PermisionName);
+
+            // 4. TẠO COOKIE ĐĂNG NHẬP (Claims)
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.FullName ?? "User"), 
                 new Claim(ClaimTypes.Email, user.Emai),
                 new Claim(ClaimTypes.NameIdentifier, user.MembersId.ToString())
-                // Chúng ta sẽ thêm vai trò (Role) ở đây sau
             };
+
+            // Thêm các quyền (roles) đã lấy được vào danh sách claims
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var claimsIdentity = new ClaimsIdentity(
                 claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -67,7 +78,7 @@ namespace BTL_LTW.Controllers
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity));
 
-            // 4. Chuyển hướng về trang chủ
+            // 5. Chuyển hướng về trang chủ
             return RedirectToAction("Index", "Home");
         }
 
@@ -88,7 +99,6 @@ namespace BTL_LTW.Controllers
                 return View();
             }
 
-            // Kiểm tra Email đã tồn tại chưa
             var existingUser = await _context.Members.FirstOrDefaultAsync(m => m.Emai == email);
             if (existingUser != null)
             {
@@ -96,10 +106,8 @@ namespace BTL_LTW.Controllers
                 return View();
             }
 
-            // Băm mật khẩu
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
 
-            // Tạo user mới
             var newUser = new Member
             {
                 FullName = fullname,
@@ -111,7 +119,7 @@ namespace BTL_LTW.Controllers
             _context.Members.Add(newUser);
             await _context.SaveChangesAsync();
 
-            // (Nâng cao) Tự động gán quyền 'Member' (PermisionID = 1) cho user mới
+            // Tự động gán quyền 'Member' (đây là quyền mặc định khi đăng ký)
             var memberRole = await _context.Permisions.FirstOrDefaultAsync(p => p.PermisionName == "Member");
             if (memberRole != null)
             {
@@ -125,7 +133,6 @@ namespace BTL_LTW.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            // Chuyển về trang đăng nhập
             return RedirectToAction("Login");
         }
 

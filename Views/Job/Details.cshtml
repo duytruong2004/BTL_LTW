@@ -1,0 +1,30 @@
+@model BTL_LTW.Models.Post
+@{
+    ViewData["Title"] = Model.PostTitle;
+}
+
+<div class="container page-container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Job" asp-action="Index">Việc làm</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.PostTitle</li>
+        </ol>
+    </nav>
+
+    <article class="post-details">
+        <h1 class="post-title">@Model.PostTitle</h1>
+         
+        <div class="post-meta">
+            Đăng ngày: @Model.CreatedAt.Value.ToString("dd/MM/yyyy lúc HH:mm")
+        </div>
+        
+        <div class="post-thumbnail">
+            <img src="@(Model.PostThumbnailUrl ?? "/images/news-default.jpg")" alt="@Model.PostTitle">
+        </div>
+        
+        <div class="post-content">
+            @Html.Raw(Model.PostContent)
+        </div>
+    </article>
+</div>

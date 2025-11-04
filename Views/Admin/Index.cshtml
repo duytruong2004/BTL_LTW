@@ -1,0 +1,52 @@
+@{
+    ViewData["Title"] = "Bảng điều khiển";
+}
+
+<div class="container page-container">
+    <h1 class="section-title">Bảng điều khiển</h1>
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Quản lý</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        @if (User.IsInRole("Admin") || User.IsInRole("Moderator"))
+        {
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Duyệt bài viết</h5>
+                        <p class="card-text">Xem và duyệt các bài viết đang chờ.</p>
+                        <a asp-action="PendingPosts" class="btn btn-primary">Đi đến</a>
+                    </div>
+                </div>
+            </div>
+        }
+        
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Quản lý Người dùng</h5>
+                        <p class="card-text">Xem và chỉnh sửa quyền của người dùng.</p>
+                        <a asp-action="ManageUsers" class="btn btn-danger">Đi đến</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Quản lý Danh mục</h5>
+                        <p class="card-text">Thêm/sửa/xóa các danh mục bài viết.</p>
+                        <a href="#" class="btn btn-secondary disabled">Sắp ra mắt</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

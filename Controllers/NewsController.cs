@@ -1,11 +1,12 @@
-using BTL_LTW.Models; // Thay BTL_LTW bằng tên project
+// [Nội dung file Controllers/NewsController.cs]
+using BTL_LTW.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
-using X.PagedList; // <-- THÊM DÒNG NÀY
+using X.PagedList;
 
-namespace BTL_LTW.Controllers // Thay BTL_LTW bằng tên project
+namespace BTL_LTW.Controllers
 {
     public class NewsController : Controller
     {
@@ -16,38 +17,37 @@ namespace BTL_LTW.Controllers // Thay BTL_LTW bằng tên project
             _context = context;
         }
 
-        // GET: /News/
-        // GET: /News?page=2
         public async Task<IActionResult> Index(int? page)
-        {
-            // Lấy ID của Category "Tin tức nổi bật"
-            var newsCategoryId = await _context.Categories
-                                    .Where(c => c.CategoryName == "Tin tức nổi bật")
-                                    .Select(c => c.CategoryId)
-                                    .FirstOrDefaultAsync();
+{
+    var newsCategoryId = await _context.Categories
+                                .Where(c => c.CategoryName == "Tin tức nổi bật")
+                                .Select(c => c.CategoryId)
+                                .FirstOrDefaultAsync();
 
-            if (newsCategoryId == 0)
-            {
-                // Xử lý nếu không tìm thấy Category
-                return NotFound(); 
-            }
+    if (newsCategoryId == 0)
+    {
+        return NotFound();
+    }
 
-            // Lấy danh sách bài Post thuộc Category "Tin tức nổi bật"
-            var listNews = _context.Posts
-                            .Where(p => p.CategoryId == newsCategoryId)
-                            .OrderByDescending(p => p.CreatedAt);
+    var listNews = _context.Posts
+                    .Where(p => p.CategoryId == newsCategoryId 
+                            && p.ApproveStatus == 1)
+                    .OrderByDescending(p => p.CreatedAt);
 
-            // Cấu hình phân trang
-            int pageNumber = (page ?? 1);
-            int pageSize = 6; // Hiển thị 6 bài viết mỗi trang
+    int pageNumber = (page ?? 1);
+    int pageSize = 6;
 
-            // Tạo danh sách đã phân trang
-            var pagedNews = await listNews.ToPagedListAsync(pageNumber, pageSize);
+    var totalCount = await listNews.CountAsync();
+    var items = await listNews
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
 
-            return View(pagedNews);
-        }
+    var pagedNews = new X.PagedList.StaticPagedList<Post>(items, pageNumber, pageSize, totalCount);
 
-        // GET: /News/Details/5
+    return View(pagedNews);
+}
+
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -55,15 +55,20 @@ namespace BTL_LTW.Controllers // Thay BTL_LTW bằng tên project
                 return NotFound();
             }
 
-            // Tìm bài post theo ID
             var post = await _context.Posts
-                .Include(p => p.Member) // Lấy thông tin người đăng (nếu cần)
+                .Include(p => p.Member)
                 .FirstOrDefaultAsync(m => m.PostId == id);
 
             if (post == null)
             {
                 return NotFound();
             }
+            
+            // TĂNG VIEW COUNT (NÂNG CAO)
+            post.ViewCount = (post.ViewCount ?? 0) + 1;
+            _context.Update(post);
+            await _context.SaveChangesAsync();
+
 
             return View(post);
         }

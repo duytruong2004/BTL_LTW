@@ -1,0 +1,49 @@
+@model IEnumerable<BTL_LTW.Models.Member>
+@{
+    ViewData["Title"] = "Quản lý Người dùng";
+}
+
+<div class="container page-container">
+    <h1 class="section-title">Quản lý Người dùng</h1>
+    
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index">Quản lý</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Quản lý Người dùng</li>
+        </ol>
+    </nav>
+    
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Họ tên</th>
+                <th>Email</th>
+                <th>Ngày tạo</th>
+                <th>Quyền</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.MembersId</td>
+                    <td>@user.FullName</td>
+                    <td>@user.Emai</td>
+                    <td>@user.CreatedAt.Value.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        @foreach (var p in user.MemberPermisions.Where(p => p.Licensed == true))
+                        {
+                            <span class="badge bg-primary">@p.Permision.PermisionName</span>
+                        }
+                    </td>
+                    <td>
+                        <a href="#" class="btn btn-sm btn-warning disabled">Sửa quyền</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

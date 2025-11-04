@@ -1,0 +1,56 @@
+@model BTL_LTW.Models.Post
+@{
+    ViewData["Title"] = "Đăng bài mới";
+}
+
+<div class="container page-container">
+    <h1 class="section-title">Đăng bài mới</h1>
+    
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Đăng bài mới</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="PostTitle" class="control-label">Tiêu đề bài viết *</label>
+                    <input asp-for="PostTitle" class="form-control" />
+                    <span asp-validation-for="PostTitle" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="CategoryId" class="control-label">Danh mục *</label>
+                    <select asp-for="CategoryId" class="form-control" asp-items="@ViewBag.Categories">
+                        <option value="">-- Chọn danh mục --</option>
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="PostThumbnailUrl" class="control-label">Link ảnh thumbnail (URL)</label>
+                    <input asp-for="PostThumbnailUrl" class="form-control" placeholder="https://example.com/image.jpg" />
+                    <span asp-validation-for="PostThumbnailUrl" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="PostContent" class="control-label">Nội dung *</label>
+                    <textarea asp-for="PostContent" class="form-control" rows="15"></textarea>
+                    <span asp-validation-for="PostContent" class="text-danger"></span>
+                    <small class="form-text text-muted">Bạn có thể sử dụng mã HTML cơ bản tại đây.</small>
+                </div>
+
+                <div class="form-group mb-3 text-center">
+                    <input type="submit" value="Đăng bài" class="btn btn-primary btn-lg" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
