@@ -45,7 +45,15 @@
                         <td>@item.Member.FullName</td>
                         <td>@item.CreatedAt.Value.ToString("dd/MM/yyyy HH:mm")</td>
                         <td>
-                            <form asp-action="Approve" asp-route-id="@item.PostId" method="post" style="display:inline;">
+                            <!-- SỬA FORM DUYỆT BÀI -->
+                            <form asp-action="Approve" asp-controller="Admin" method="post" style="display:inline;">
+                                <!--
+                                  THÊM DÒNG NÀY:
+                                  Gửi ID của bài viết trong body của form. 
+                                  Tên 'name="id"' phải khớp với tên tham số 'int id' trong action Approve.
+                                -->
+                                <input type="hidden" name="id" value="@item.PostId" />
+
                                 <button type="submit" class="btn btn-success btn-sm">Duyệt</button>
                             </form>
                             
@@ -55,27 +63,33 @@
                         </td>
                     </tr>
                     
+                    <!-- SỬA FORM TỪ CHỐI (Modal) -->
                     <div class="modal fade" id="rejectModal-@item.PostId" tabindex="-1" aria-labelledby="rejectModalLabel-@item.PostId" aria-hidden="true">
-                      <div class="modal-dialog">
-                        <div class="modal-content">
-                          <form asp-action="Reject" asp-route-id="@item.PostId" method="post">
-                              <div class="modal-header">
-                                <h5 class="modal-title" id="rejectModalLabel-@item.PostId">Lý do từ chối bài: @item.PostTitle</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                              </div>
-                              <div class="modal-body">
-                                <div class="form-group">
-                                    <label for="reason-@item.PostId" class="form-label">Lý do:</label>
-                                    <textarea name="reason" id="reason-@item.PostId" class="form-control" rows="3" required></textarea>
-                                </div>
-                              </div>
-                              <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                <button type="submit" class="btn btn-danger">Xác nhận Từ chối</button>
-                              </div>
-                          </form>
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <!-- Bỏ asp-route-id, thêm asp-controller="Admin" -->
+                                <form asp-action="Reject" asp-controller="Admin" method="post">
+                                    
+                                    <!-- THÊM DÒNG NÀY: Gửi ID ẩn -->
+                                    <input type="hidden" name="id" value="@item.PostId" />
+
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="rejectModalLabel-@item.PostId">Lý do từ chối bài: @item.PostTitle</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <label for="reason-@item.PostId" class="form-label">Lý do:</label>
+                                            <textarea name="reason" id="reason-@item.PostId" class="form-control" rows="3" required></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                        <button type="submit" class="btn btn-danger">Xác nhận Từ chối</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
-                      </div>
                     </div>
                 }
             </tbody>

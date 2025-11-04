@@ -1,16 +1,14 @@
-// [Nội dung file Controllers/AdminController.cs]
 using BTL_LTW.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System;
 
 namespace BTL_LTW.Controllers
 {
-    // Yêu cầu đăng nhập và có 1 trong 2 quyền này
     [Authorize(Roles = "Admin, Moderator")]
     public class AdminController : Controller
     {
@@ -21,44 +19,38 @@ namespace BTL_LTW.Controllers
             _context = context;
         }
 
-        // GET: /Admin (Dashboard chung)
+        // Trang Dashboard
         public IActionResult Index()
         {
             return View();
         }
 
-        // GET: /Admin/PendingPosts
-        // Trang duyệt bài (cho cả Admin và Moderator)
+        // =================== DUYỆT BÀI ===================
         [Authorize(Roles = "Admin, Moderator")]
         public async Task<IActionResult> PendingPosts()
         {
             var pendingList = await _context.Posts
-                .Where(p => p.ApproveStatus == 0) // Lấy bài chờ duyệt
+                .Where(p => p.ApproveStatus == 0)
                 .Include(p => p.Member)
                 .Include(p => p.Category)
                 .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
-            
+
             return View(pendingList);
         }
 
-        // POST: /Admin/Approve/5
-        // Action duyệt bài
         [HttpPost]
         [Authorize(Roles = "Admin, Moderator")]
         public async Task<IActionResult> Approve(int id)
         {
             var post = await _context.Posts.FindAsync(id);
-            if (post == null)
-            {
-                return NotFound();
-            }
+            if (post == null) return NotFound();
 
             var memberIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             int.TryParse(memberIdStr, out int adminId);
 
-            post.ApproveStatus = 1; // 1 = Đã duyệt
-            post.PostStatus = 1;    // 1 = Hiển thị
+            post.ApproveStatus = 1;
+            post.PostStatus = 1;
             post.ApprovedDate = DateTime.Now;
             post.ApproveBy = adminId;
             post.UpdatedAt = DateTime.Now;
@@ -66,40 +58,33 @@ namespace BTL_LTW.Controllers
             _context.Update(post);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("PendingPosts");
+            return RedirectToAction(nameof(PendingPosts));
         }
 
-        // POST: /Admin/Reject/5
-        // Action từ chối bài
         [HttpPost]
         [Authorize(Roles = "Admin, Moderator")]
         public async Task<IActionResult> Reject(int id, string reason)
         {
             var post = await _context.Posts.FindAsync(id);
-            if (post == null)
-            {
-                return NotFound();
-            }
+            if (post == null) return NotFound();
 
             var memberIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             int.TryParse(memberIdStr, out int adminId);
 
-            post.ApproveStatus = 2; // 2 = Đã từ chối
-            post.PostStatus = 0;    // 0 = Ẩn
+            post.ApproveStatus = 2;
+            post.PostStatus = 0;
             post.ApprovedDate = DateTime.Now;
             post.ApproveBy = adminId;
-            post.RejectedReason = reason; // Lưu lý do từ chối
+            post.RejectedReason = reason;
             post.UpdatedAt = DateTime.Now;
 
             _context.Update(post);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("PendingPosts");
+            return RedirectToAction(nameof(PendingPosts));
         }
 
-
-        // GET: /Admin/ManageUsers
-        // Trang quản lý người dùng (Chỉ Admin)
+        // =================== QUẢN LÝ NGƯỜI DÙNG ===================
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ManageUsers()
         {
@@ -107,8 +92,50 @@ namespace BTL_LTW.Controllers
                 .Include(m => m.MemberPermisions)
                 .ThenInclude(mp => mp.Permision)
                 .ToListAsync();
-                
+
             return View(users);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> EditUserRole(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var member = await _context.Members
+                .Include(m => m.MemberPermisions)
+                .FirstOrDefaultAsync(m => m.MembersId == id);
+
+            if (member == null) return NotFound();
+
+            ViewBag.Permissions = await _context.Permisions.ToListAsync();
+            return View(member);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> EditUserRole(int memberId, int permissionId)
+        {
+            var memberPermission = await _context.MemberPermisions
+                .FirstOrDefaultAsync(mp => mp.MemberId == memberId); // Sửa lại đúng property
+
+            if (memberPermission != null)
+            {
+                memberPermission.PermisionId = permissionId;
+                _context.Update(memberPermission);
+            }
+            else
+            {
+                memberPermission = new MemberPermision
+                {
+                    MemberId = memberId,
+                    PermisionId = permissionId
+                };
+                _context.Add(memberPermission);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(ManageUsers));
         }
     }
 }

@@ -11,13 +11,14 @@
             
             @foreach (var post in Model.FeaturedNews)
             {
-                <article class="news-card">
-                    <a href="#">
+               <article class="news-card">
+                    <a asp-controller="News" asp-action="Details" asp-route-id="@post.PostId">
                         <img src="@(post.PostThumbnailUrl ?? "/images/news-1.jpg")" alt="@post.PostTitle">
                     </a>
                     <div class="card-content">
-                        <h3><a href="#">@post.PostTitle</a></h3>
-                        <a href="#" class="read-more">Đọc thêm &rarr;</a>
+         
+                 <h3><a asp-controller="News" asp-action="Details" asp-route-id="@post.PostId">@post.PostTitle</a></h3>
+                        <a asp-controller="News" asp-action="Details" asp-route-id="@post.PostId" class="read-more">Đọc thêm &rarr;</a>
                     </div>
                 </article>
             }
@@ -26,7 +27,8 @@
     </div>
 </section>
 
-<section class="home-news" style="background-color: #f8f9fa; padding: 4rem 0;"> <div class="container">
+<section class="home-news" style="background-color: #f8f9fa; padding: 4rem 0;">
+    <div class="container">
         <h2 class="section-title">Tin tức hội viên</h2>
         
         <div class="news-grid">
