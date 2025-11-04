@@ -19,6 +19,8 @@ namespace BTL_LTW.Controllers
 
         public async Task<IActionResult> Index(int? page)
 {
+    // BỎ LỌC THEO CATEGORY "Tin tức nổi bật"
+    /*
     var newsCategoryId = await _context.Categories
                                 .Where(c => c.CategoryName == "Tin tức nổi bật")
                                 .Select(c => c.CategoryId)
@@ -28,14 +30,16 @@ namespace BTL_LTW.Controllers
     {
         return NotFound();
     }
+    */
 
+    // SỬA LẠI: Lấy tất cả bài viết đã được duyệt (ApproveStatus == 1)
+    // không phân biệt CategoryId
     var listNews = _context.Posts
-                    .Where(p => p.CategoryId == newsCategoryId 
-                            && p.ApproveStatus == 1)
+                    .Where(p => p.ApproveStatus == 1) 
                     .OrderByDescending(p => p.CreatedAt);
 
     int pageNumber = (page ?? 1);
-    int pageSize = 6;
+    int pageSize = 8; // Bạn có thể thay đổi số lượng tin tức mỗi trang ở đây
 
     var totalCount = await listNews.CountAsync();
     var items = await listNews

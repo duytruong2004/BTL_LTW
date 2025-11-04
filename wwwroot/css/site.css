@@ -574,3 +574,92 @@ img {
 .page-item:not(.disabled) .page-link:hover {
     background-color: #e9ecef;
 }
+/* =================================
+   CSS CHO TRANG TIN TỨC (GRID 3 CỘT)
+   ================================= */
+
+/* Container bọc các bài viết */
+.news-list-container {
+    display: grid;
+    /* Chia làm 3 cột bằng nhau */
+    grid-template-columns: repeat(3, 1fr);
+    /* Khoảng cách giữa các bài viết */
+    gap: 2rem; 
+}
+
+/* Từng bài viết (dạng card) */
+.news-list-item {
+    display: flex;
+    flex-direction: column; /* Xếp ảnh và nội dung theo chiều dọc */
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    overflow: hidden; /* Đảm bảo ảnh bo góc đúng */
+    background-color: #fff; /* Nền trắng cho card */
+}
+
+/* Ảnh của bài viết */
+.news-list-item .news-item-image {
+    width: 100%;
+    aspect-ratio: 16 / 9; /* Giữ tỷ lệ ảnh 16:9 */
+    overflow: hidden;
+}
+
+.news-list-item .news-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Đảm bảo ảnh lấp đầy khung */
+}
+
+/* Nội dung của bài viết */
+.news-list-item .news-item-content {
+    padding: 1.5rem;
+    flex-grow: 1; /* Giúp phần nội dung co giãn */
+    display: flex;
+    flex-direction: column;
+}
+
+.news-list-item .news-item-title a {
+    color: #333;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.news-list-item .news-item-title a:hover {
+    color: #007bff;
+}
+
+.news-list-item .news-item-meta {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0.5rem 0 1rem 0;
+}
+
+.news-list-item .news-item-description {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.6;
+    flex-grow: 1; /* Đẩy link "Đọc thêm" xuống dưới */
+    margin-bottom: 1rem;
+}
+
+.news-list-item .read-more {
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* Thêm media query để responsive trên di động (hiển thị 1 cột) */
+@media (max-width: 992px) {
+    .news-list-container {
+        /* 2 cột trên tablet */
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .news-list-container {
+        /* 1 cột trên điện thoại */
+        grid-template-columns: 1fr;
+    }
+}

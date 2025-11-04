@@ -159,7 +159,6 @@ D:\BTL_LTW\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json
 D:\BTL_LTW\obj\Debug\net9.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 D:\BTL_LTW\obj\Debug\net9.0\scopedcss\bundle\BTL_LTW.styles.css
 D:\BTL_LTW\obj\Debug\net9.0\scopedcss\projectbundle\BTL_LTW.bundle.scp.css
-D:\BTL_LTW\obj\Debug\net9.0\compressed\jiseeq3yq7-ifrahjq4wi.gz
 D:\BTL_LTW\obj\Debug\net9.0\compressed\fjb3kt8iyl-61n19gt1b8.gz
 D:\BTL_LTW\obj\Debug\net9.0\compressed\8kj1jj3ce2-47otxtyo56.gz
 D:\BTL_LTW\obj\Debug\net9.0\compressed\yahjy5jfco-4v8eqarkd7.gz
@@ -188,3 +187,4 @@ D:\BTL_LTW\obj\Debug\net9.0\refint\BTL_LTW.dll
 D:\BTL_LTW\obj\Debug\net9.0\BTL_LTW.pdb
 D:\BTL_LTW\obj\Debug\net9.0\BTL_LTW.genruntimeconfig.cache
 D:\BTL_LTW\obj\Debug\net9.0\ref\BTL_LTW.dll
+D:\BTL_LTW\obj\Debug\net9.0\compressed\jiseeq3yq7-ovufdaurq5.gz
