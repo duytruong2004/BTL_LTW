@@ -1,0 +1,104 @@
+@model IEnumerable<BTL_LTW.Models.Post>
+@{
+    ViewData["Title"] = "Quản lý bài viết";
+}
+
+<div class="container page-container">
+    <h1 class="section-title">Quản lý bài viết</h1>
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index">Quản lý</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Quản lý bài viết</li>
+        </ol>
+    </nav>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info" role="alert">
+            Không có bài viết nào.
+        </div>
+    }
+    else
+    {
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Tiêu đề</th>
+                    <th>Danh mục</th>
+                    <th>Người đăng</th>
+                    <th>Ngày đăng</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <a asp-controller="News" asp-action="Details" asp-route-id="@item.PostId" target="_blank">
+                                @item.PostTitle
+                            </a>
+                        </td>
+                        <td>@(item.Category?.CategoryName ?? "N/A")</td>
+                        <td>@(item.Member?.FullName ?? "N/A")</td>
+                        <td>@item.CreatedAt.Value.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>
+                            @if (item.ApproveStatus == 1)
+                            {
+                                <span class="badge bg-success">Đã duyệt</span>
+                            }
+                            else if (item.ApproveStatus == 2)
+                            {
+                                <span class="badge bg-danger">Đã từ chối</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">Chờ duyệt</span>
+                            }
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal-@item.PostId">
+                                Xóa
+                            </button>
+                        </td>
+                    </tr>
+
+                    <div class="modal fade" id="deleteModal-@item.PostId" tabindex="-1" aria-labelledby="deleteModalLabel-@item.PostId" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form asp-action="DeletePost" asp-controller="Admin" method="post">
+                                    <input type="hidden" name="id" value="@item.PostId" />
+                                    @Html.AntiForgeryToken()
+
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="deleteModalLabel-@item.PostId">Xác nhận xóa bài viết?</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Bạn có chắc chắn muốn xóa bài viết này không?</p>
+                                        <p><strong>@item.PostTitle</strong></p>
+                                        <p class="text-danger">Hành động này không thể hoàn tác.</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                        <button type="submit" class="btn btn-danger">Xác nhận Xóa</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </tbody>
+        </table>
+    }
+</div>

@@ -137,5 +137,41 @@ namespace BTL_LTW.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(ManageUsers));
         }
+
+
+        // =================== QUẢN LÝ BÀI VIẾT ===================
+
+[Authorize(Roles = "Admin, Moderator")]
+public async Task<IActionResult> ManagePosts()
+{
+    // Lấy tất cả bài viết (bất kể trạng thái duyệt)
+    var allPosts = await _context.Posts
+        .Include(p => p.Member)      // Lấy thông tin người đăng
+        .Include(p => p.Category)    // Lấy thông tin danh mục
+        .OrderByDescending(p => p.CreatedAt) // Sắp xếp mới nhất lên đầu
+        .ToListAsync();
+
+    return View(allPosts);
+}
+
+[HttpPost]
+[ValidateAntiForgeryToken]
+[Authorize(Roles = "Admin, Moderator")]
+public async Task<IActionResult> DeletePost(int id)
+{
+    var post = await _context.Posts.FindAsync(id);
+    if (post == null)
+    {
+        return NotFound();
     }
+
+    _context.Posts.Remove(post);
+    await _context.SaveChangesAsync();
+
+    // (Tùy chọn) Thêm TempData để thông báo thành công
+    TempData["SuccessMessage"] = "Đã xóa bài viết thành công!";
+
+    return RedirectToAction(nameof(ManagePosts));
+}
+}
 }
