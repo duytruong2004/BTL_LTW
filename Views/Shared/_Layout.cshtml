@@ -34,7 +34,7 @@
                 </ul>
             </nav>
 
-            <div class="header-actions">
+           <div class="header-actions">
                 @if (User.Identity.IsAuthenticated)
                 {
                     // Nút "Quản lý" (Chỉ Admin hoặc Moderator)
@@ -48,6 +48,14 @@
                     {
                         <a asp-controller="Post" asp-action="Create" class="btn btn-primary" style="margin-right: 10px;">Đăng bài</a>
                     }
+
+                    // === START: THÊM NÚT ĐĂNG KÝ DOANH NGHIỆP ===
+                    // Chỉ hiển thị nếu đã đăng nhập NHƯNG KHÔNG phải là Admin, Moderator hay Enterprise
+                    @if (!User.IsInRole("Admin") && !User.IsInRole("Moderator") && !User.IsInRole("Enterprise"))
+                    {
+                        <a asp-controller="Account" asp-action="RegisterEnterprise" class="btn btn-success" style="margin-right: 10px;">Đăng ký Doanh nghiệp</a>
+                    }
+                    // === END: THÊM NÚT ĐĂNG KÝ DOANH NGHIỆP ===
 
                     <span style="margin-right: 15px; color: #fff;">Xin chào, @User.Identity.Name!</span>
                     <a asp-controller="Account" asp-action="Logout" class="btn btn-secondary">Đăng xuất</a>

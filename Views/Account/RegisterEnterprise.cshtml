@@ -1,0 +1,27 @@
+@{
+    ViewData["Title"] = "Đăng ký Doanh nghiệp";
+}
+
+<div class="auth-container">
+    <h2 class="section-title">Xác nhận Đăng ký Doanh nghiệp</h2>
+    <p>
+        Việc này sẽ nâng cấp tài khoản của bạn lên tài khoản Doanh nghiệp, cho phép bạn đăng bài tuyển dụng và tin tức (chờ duyệt).
+    </p>
+    <p>Bạn có chắc chắn muốn tiếp tục?</p>
+
+    <form asp-action="RegisterEnterprise" method="post">
+        
+        @* Thêm AntiForgeryToken để bảo mật *@
+        @Html.AntiForgeryToken()
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="auth-error">@ViewBag.Error</div>
+        }
+
+        <div class="form-group" style="margin-top: 20px;">
+            <button type="submit" class="btn btn-success btn-block">Xác nhận nâng cấp</button>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary" style="margin-left: 10px;">Hủy bỏ</a>
+        </div>
+    </form>
+</div>
